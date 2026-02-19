@@ -2,53 +2,78 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>주차타워 관리</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🚗주차타워 관리</title>
+
 <style>
 body {
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   margin: 0;
-  padding: 20px;
+  padding: 15px;
   background: #f4f4f4;
   transition: 0.3s;
 }
+
 .dark {
   background: #121212;
   color: white;
 }
+
 .container {
-  max-width: 800px;
+  max-width: 1000px;
   margin: auto;
 }
+
 .grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 10px;
 }
+
 .slot {
   border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 10px;
   background: white;
+  transition: 0.2s;
 }
+
 .dark .slot {
   background: #1e1e1e;
   border-color: #444;
 }
+
+.slot strong {
+  font-size: 14px;
+}
+
 input {
   width: 100%;
-  margin-top: 5px;
-  padding: 5px;
+  margin-top: 8px;
+  padding: 10px;
+  font-size: 16px;
+  box-sizing: border-box;
 }
+
 button {
   margin: 5px 5px 10px 0;
-  padding: 6px 10px;
+  padding: 10px 14px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: none;
   cursor: pointer;
 }
+
 .hidden {
   display: none;
 }
+
+.top-bar {
+  margin-bottom: 15px;
+}
 </style>
 </head>
+
 <body>
 
 <div id="login">
@@ -58,10 +83,14 @@ button {
 </div>
 
 <div id="main" class="hidden container">
+
   <h2>주차타워 관리 (1 ~ 48번)</h2>
 
-  <button onclick="toggleTheme()">다크 / 라이트</button>
-  <button onclick="resetAll()">전체 초기화</button>
+  <div class="top-bar">
+    <button onclick="toggleTheme()">다크 / 라이트</button>
+    <button onclick="resetAll()">전체 초기화</button>
+    <button onclick="logout()">잠금</button>
+  </div>
 
   <div class="grid" id="grid"></div>
 </div>
@@ -85,6 +114,13 @@ function checkPassword() {
   }
 }
 
+function logout() {
+  localStorage.removeItem("loggedIn");
+  mainDiv.classList.add("hidden");
+  loginDiv.classList.remove("hidden");
+  document.getElementById("passwordInput").value = "";
+}
+
 function generateSlots() {
   grid.innerHTML = "";
   for (let i = 1; i <= TOTAL_SLOTS; i++) {
@@ -92,9 +128,11 @@ function generateSlots() {
     div.className = "slot";
     div.innerHTML = `
       <strong>${i}번</strong>
-      <input type="text" id="slot-${i}" 
-      oninput="saveSlot(${i})"
-      placeholder="차량번호 입력">
+      <input type="text"
+             inputmode="text"
+             id="slot-${i}"
+             oninput="saveSlot(${i})"
+             placeholder="차량번호 입력">
     `;
     grid.appendChild(div);
 
@@ -125,6 +163,7 @@ function toggleTheme() {
 }
 
 (function init() {
+
   if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
   }
@@ -135,6 +174,7 @@ function toggleTheme() {
   }
 
   generateSlots();
+
 })();
 </script>
 
